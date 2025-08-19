@@ -1,7 +1,8 @@
 package com.telran.application.controller;
 
 import com.telran.application.model.BookModel;
-import dto.Book;
+import com.telran.application.model.dto.Book;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RequestParam;
