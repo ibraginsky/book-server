@@ -2,7 +2,7 @@ package com.telran.application.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import dto.Book;
+import com.telran.application.model.dto.Book;
 
 import java.io.*;
 import java.util.HashMap;
