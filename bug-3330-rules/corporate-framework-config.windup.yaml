@@ -1,0 +1,46 @@
+- category: mandatory
+  customVariables: []
+  description: Rule to test Bug 3330 | Legacy configuration with io.konveyor.demo.config.ApplicationConfiguration
+  effort: 1
+  labels:
+  - konveyor.io/source=java
+  - konveyor.io/source=java-ee
+  - konveyor.io/target=cloud-readiness
+  - configuration
+  links:
+  - title: Spring Documentation - PropertySource javadoc
+    url: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/PropertySource.html
+  - title: Mkyong - Spring @PropertySource example
+    url: https://mkyong.com/spring/spring-propertysources-example/
+  - title: Baeldung - Properties with Spring and Spring Boot
+    url: https://www.baeldung.com/properties-with-spring
+  message: "The legacy ApplicationConfiguration class is being used in this application.
+    This is discouraged by the migration\n guidelines, and should be replaced by a
+    more standard approach using Spring's @PropertySource annotation and Environment
+    class:\n\n\n ```java\n @PropertySource(\"classpath:persistence.properties\")\n
+    public class PersistenceConfig {{\n @Autowired\n private Environment env;\n\n
+    @Bean\n public DataSource dataSource() {{\n final DriverManagerDataSource dataSource
+    = new DriverManagerDataSource();\n dataSource.setDriverClassName(env.getProperty(\"jdbc.driverClassName\"));\n
+    dataSource.setUrl(env.getProperty(\"jdbc.url\"));\n dataSource.setUsername(env.getProperty(\"jdbc.user\"));\n
+    dataSource.setPassword(env.getProperty(\"jdbc.password\"));\n\n return dataSource;\n
+    }}\n }}\n ```\n\n\n\n This allows externalizing the configuration in Kubernetes
+    by injecting it as a ConfigMap or a Secret in the lib directory from the\n container
+    running the Tomcat instance. Please take into account that, given the way Tomcat
+    classloader works, any properties files packaged within the WAR artifact\n will
+    take precedence over the files available in the lib directory. It would be advisable
+    to remove these files on the WAR to be deployed in Kubernetes.\n A good way to
+    do this would be by configuring a kubernetes profile in Maven that excludes the
+    properties files:\n\n ```xml\n \n <profiles>\n \t\t<profile>\n \t\t\t<id>local</id>\n
+    \t\t\t<activation>\n \t\t<activeByDefault>true</activeByDefault>\n \t\t</activation>\n
+    \t\t</profile>\n \t\t<profile>\n \t\t\t<id>kubernetes</id>\n \t\t\t<activation
+    />\n \t\t\t<build>\n \t\t<resources>\n \t\t<resource>\n \t\t<directory>src/main/resources</directory>\n
+    \t\t<excludes>\n \t\t<exclude>**/*.properties</exclude>\n \t\t</excludes>\n \t\t</resource>\n
+    \t\t</resources>\n \t\t</build>\n \t\t</profile>\n \t</profiles>\n \n ```\n \n
+    This would ensure that the properties files that the application uses are the
+    ones inside the ConfigMap or Secret objects to be injected in the Tomcat lib directory
+    at deployment time."
+  ruleID: corporate-config-01000
+  when:
+    java.referenced:
+      location: VARIABLE_DECLARATION
+      pattern: io.konveyor.demo.config.ApplicationConfiguration

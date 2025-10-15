@@ -1,0 +1,22 @@
+- category: mandatory
+  customVariables: []
+  description: Rule to test Bug 3330 | APIs found, need to register!
+  effort: 1
+  labels:
+  - konveyor.io/target=cloud-readiness
+  - konveyor.io/source
+  - api
+  links: []
+  message: This API call needs to be registered in our ARO firewall before migration
+    can be completed!
+  ruleID: api-usage-00001
+  tag:
+  - API=Exposed APIs
+  when:
+    or:
+    - java.referenced:
+        location: ANNOTATION
+        pattern: org.springframework.web.bind.annotation.GetMapping
+    - java.referenced:
+        location: ANNOTATION
+        pattern: org.springframework.web.bind.annotation.RequestMapping
